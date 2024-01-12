@@ -11,8 +11,8 @@ export const appRoutes = [
   { group: 'Dashboard', title: 'Dashboard', path: '/', element: <IndexPage /> },
   {
     group: 'Dashboard',
-    path: 'user',
-    title: 'user',
+    path: 'customers',
+    title: 'Customers',
     element: <UserPage />,
   },
   {
