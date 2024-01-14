@@ -10,7 +10,7 @@ import { v4 as uuidv } from 'uuid';
 import { appRoutes } from 'src/routes/config';
 import ThemeProvider from 'src/theme';
 import DashboardLayout from 'src/layouts/dashboard';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import ProtectedRoute from './routes/ProtectedRoute';
 
 const LoginPage = lazy(() => import('src/pages/login'));
@@ -24,7 +24,7 @@ export default function App() {
   return (
     <ThemeProvider>
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/login" element={userInfo == null ? <LoginPage /> : <Navigate to="/" />} />
         <Route
           path="/"
           element={

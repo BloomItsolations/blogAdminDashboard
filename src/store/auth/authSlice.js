@@ -4,7 +4,9 @@ import { userLogin } from './authActions';
 
 const initialState = {
   loading: false,
-  userInfo: localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null,
+  userInfo: sessionStorage.getItem('userInfo')
+    ? JSON.parse(sessionStorage.getItem('userInfo'))
+    : null,
   error: null,
   success: false,
 };
@@ -14,7 +16,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      localStorage.removeItem('userInfo'); // deletes token from storage
+      sessionStorage.removeItem('userInfo'); // deletes token from storage
       state.loading = false;
       state.userInfo = null;
       state.error = null;

@@ -1,31 +1,28 @@
 import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Stack, Button, Container, Typography } from '@mui/material';
-
-import RestApi from 'src/api/RestApi';
 
 import Iconify from 'src/components/iconify';
 
 import ListView from 'src/sections/category/List';
+import Create from 'src/sections/category/Create';
+
+import { createCategory, fetchCategories } from '../store/categorySlice';
 
 export default function Category() {
   const [isEditing, setisEditing] = useState(false);
-  const [CategoryData, setCategoryData] = useState(null);
-  const listCategory = async () => {
-    try {
-      const response = await RestApi.get('/admin/categories');
-      if (response.status === 200) {
-        setCategoryData(response.data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
+  const dispatch = useDispatch();
+  const categories = useSelector((state) => state.categories.list);
+  const handleCreateCategory = (formData) => {
+    dispatch(createCategory(formData));
   };
+
   useEffect(() => {
-    listCategory();
+    dispatch(fetchCategories());
     return () => {};
-  }, []);
+  }, [dispatch]);
 
   return (
     <>
@@ -39,28 +36,16 @@ export default function Category() {
           <Button
             variant="contained"
             color="inherit"
-            startIcon={<Iconify icon="eva:plus-fill" />}
+            startIcon={!isEditing ? <Iconify icon="eva:plus-fill" /> : null}
             onClick={() => setisEditing(!isEditing)}
           >
             {isEditing ? 'List Category' : 'New Category'}
           </Button>
         </Stack>
         {isEditing ? (
-          <div>Form</div>
+          <Create onSaveCategory={handleCreateCategory} />
         ) : (
-          <>
-            {CategoryData !== null ? (
-              <ListView
-                rowData={CategoryData}
-                columns={[
-                  { id: 'name', label: 'Name' },
-                  { id: 'description', label: 'Description' },
-                  { id: 'imageUrl', label: 'imageUrl' },
-                  { id: 'id' },
-                ]}
-              />
-            ) : null}
-          </>
+          <>{categories !== null ? <ListView rowData={categories} /> : null}</>
         )}
       </Container>
     </>
