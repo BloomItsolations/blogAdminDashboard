@@ -5,9 +5,9 @@ import RestApi from 'src/api/RestApi';
 // Async Thunk for fetching categories
 export const fetchCategories = createAsyncThunk(
   'categories/fetchCategories',
-  async (_, { getState }) => {
+  async (_, { getState, rejectWithValue }) => {
     try {
-      const { token } = getState().user; // Assuming user state has a 'token' field
+      const { token } = getState().auth; // Assuming user state has a 'token' field
       const response = await RestApi.get('/admin/categories', {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -15,7 +15,11 @@ export const fetchCategories = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      throw Error(error.message);
+      // Return custom error message from the API if any
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      }
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -23,9 +27,9 @@ export const fetchCategories = createAsyncThunk(
 // Async Thunk for creating a category
 export const createCategory = createAsyncThunk(
   'categories/createCategory',
-  async (category, { getState }) => {
+  async (category, { getState, rejectWithValue }) => {
     try {
-      const { userInfo } = getState().user;
+      const { userInfo } = getState().auth;
       const config = {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -36,7 +40,11 @@ export const createCategory = createAsyncThunk(
       const data = await response.data?.response;
       return data;
     } catch (error) {
-      throw Error(error.message);
+      // Return custom error message from the API if any
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      }
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -44,9 +52,9 @@ export const createCategory = createAsyncThunk(
 // Async Thunk for updating a category
 export const updateCategory = createAsyncThunk(
   'categories/updateCategory',
-  async ({ id, category }, { getState }) => {
+  async ({ id, category }, { getState, rejectWithValue }) => {
     try {
-      const { userInfo } = getState().user;
+      const { userInfo } = getState().auth;
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -57,7 +65,11 @@ export const updateCategory = createAsyncThunk(
       const data = await response.data;
       return data;
     } catch (error) {
-      throw Error(error.message);
+      // Return custom error message from the API if any
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      }
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -65,9 +77,9 @@ export const updateCategory = createAsyncThunk(
 // Async Thunk for deleting a category
 export const deleteCategory = createAsyncThunk(
   'categories/deleteCategory',
-  async (id, { getState }) => {
+  async (id, { getState, rejectWithValue }) => {
     try {
-      const { userInfo } = getState().user;
+      const { userInfo } = getState().auth;
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -78,7 +90,11 @@ export const deleteCategory = createAsyncThunk(
       const data = await response.json();
       return { id, data };
     } catch (error) {
-      throw Error(error.message);
+      // Return custom error message from the API if any
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      }
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -89,10 +105,17 @@ const categorySlice = createSlice({
     list: null,
     status: 'idle',
     error: null,
+    success: null,
   },
-  reducers: {},
+  reducers: {
+    clearMessages: (state) => {
+      state.success = null;
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
+      // Fetch Categories
       .addCase(fetchCategories.pending, (state) => {
         state.status = 'loading';
       })
@@ -104,20 +127,54 @@ const categorySlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message;
       })
+
+      // Create Category
+      .addCase(createCategory.pending, (state) => {
+        state.status = 'loading';
+      })
       .addCase(createCategory.fulfilled, (state, action) => {
-        state.list.push(action.payload);
+        state.status = 'succeeded';
+        state.success = action.payload;
+      })
+      .addCase(createCategory.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      })
+
+      // Update Category
+      .addCase(updateCategory.pending, (state) => {
+        state.status = 'loading';
       })
       .addCase(updateCategory.fulfilled, (state, action) => {
+        state.status = 'succeeded';
         const index = state.list.findIndex((category) => category.id === action.payload.id);
         if (index !== -1) {
           state.list[index] = action.payload;
+          state.success = 'Category updated successfully';
         }
       })
+      .addCase(updateCategory.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      })
+
+      // Delete Category
+      .addCase(deleteCategory.pending, (state) => {
+        state.status = 'loading';
+      })
       .addCase(deleteCategory.fulfilled, (state, action) => {
+        state.status = 'succeeded';
         const { id } = action.payload;
         state.list = state.list.filter((category) => category.id !== id);
+        state.success = 'Category deleted successfully';
+      })
+      .addCase(deleteCategory.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
       });
   },
 });
+
+export const { clearMessages } = categorySlice.actions;
 
 export default categorySlice.reducer;

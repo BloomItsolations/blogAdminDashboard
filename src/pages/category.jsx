@@ -14,7 +14,7 @@ import { createCategory, fetchCategories } from '../store/categorySlice';
 export default function Category() {
   const [isEditing, setisEditing] = useState(false);
   const dispatch = useDispatch();
-  const categories = useSelector((state) => state.categories.list);
+  const { list } = useSelector((state) => state.categories);
   const handleCreateCategory = (formData) => {
     dispatch(createCategory(formData));
   };
@@ -43,9 +43,9 @@ export default function Category() {
           </Button>
         </Stack>
         {isEditing ? (
-          <Create onSaveCategory={handleCreateCategory} />
+          <Create onSaveCategory={handleCreateCategory} existingList={list} />
         ) : (
-          <>{categories !== null ? <ListView rowData={categories} /> : null}</>
+          <>{list !== null ? <ListView rowData={list} /> : null}</>
         )}
       </Container>
     </>

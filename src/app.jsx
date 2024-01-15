@@ -19,7 +19,7 @@ const Page404 = lazy(() => import('src/pages/page-not-found'));
 
 export default function App() {
   useScrollToTop();
-  const { userInfo } = useSelector((state) => state.user);
+  const { userInfo } = useSelector((state) => state.auth);
 
   return (
     <ThemeProvider>

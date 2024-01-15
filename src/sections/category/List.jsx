@@ -5,7 +5,6 @@ import { Box, Avatar, Typography } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
 const List = ({ rowData }) => {
-  console.log(rowData);
   const columns = [
     {
       field: 's.no',
@@ -33,6 +32,13 @@ const List = ({ rowData }) => {
       width: 200,
       editable: false,
       renderCell: ({ row }) => <Typography>{row.name}</Typography>,
+    },
+    {
+      field: 'position',
+      headerName: 'Position',
+      width: 200,
+      editable: false,
+      renderCell: ({ row }) => <Typography>{row.position}</Typography>,
     },
     {
       field: 'description',
@@ -91,9 +97,7 @@ const List = ({ rowData }) => {
 };
 
 List.propTypes = {
-  rowData: PropTypes.shape({
-    initialState: PropTypes.array, // Add this line to specify the shape of initialState
-  }),
+  rowData: PropTypes.array.isRequired,
 };
 
 export default List;

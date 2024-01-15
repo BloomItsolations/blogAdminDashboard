@@ -12,7 +12,7 @@ import IconButton from '@mui/material/IconButton';
 
 import { account } from 'src/_mock/account';
 
-import { logout } from '../../../store/auth/authSlice';
+import { logout } from '../../../store/authSlice';
 // ----------------------------------------------------------------------
 
 const MENU_OPTIONS = [

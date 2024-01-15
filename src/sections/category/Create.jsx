@@ -1,21 +1,32 @@
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import React, { useState, useCallback } from 'react';
 
 import {
   Grid,
   Paper,
   Button,
+  MenuItem,
   Container,
   TextField,
   Typography,
   FormHelperText,
 } from '@mui/material';
 
-const Create = ({ onSaveCategory }) => {
+const Create = ({ onSaveCategory, existingList }) => {
   const [imagePreview, setImagePreview] = useState(null);
+  const { error, success } = useSelector((state) => state.categories);
+  const generateSerialNumbers = (start, end) =>
+    Array.from({ length: end - start + 1 }, (_, index) => start + index);
 
+  const serialNumbers = generateSerialNumbers(1, existingList.length + 20);
+
+  const availablePositions = serialNumbers.filter(
+    (serialNumber) => !existingList.some((item) => parseInt(item.position, 10) === serialNumber)
+  );
+  console.log(availablePositions);
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -37,28 +48,26 @@ const Create = ({ onSaveCategory }) => {
         formData.append('position', values.position);
         formData.append('description', values.description);
         formData.append('image', values.image);
-        console.log(values?.image);
         onSaveCategory(formData);
         // Handle the response as needed
-      } catch (error) {
-        console.error('Error creating category:', error);
+      } catch (err) {
+        console.error('Error creating category:', err);
       }
     },
   });
 
   const handleImageChange = useCallback(
     (event) => {
-      const file = event.target.files[0]; // Use the value from the input field
-      console.log(file);
-      formik.setFieldValue('image', file);
+      const selectedImgfile = event.target.files[0]; // Use the value from the input field
+      formik.setFieldValue('image', selectedImgfile);
 
       // Display image preview
-      if (file) {
+      if (selectedImgfile) {
         const reader = new FileReader();
         reader.onloadend = () => {
           setImagePreview(reader.result);
         };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(selectedImgfile);
       } else {
         setImagePreview(null);
       }
@@ -74,17 +83,16 @@ const Create = ({ onSaveCategory }) => {
     (event) => {
       event.preventDefault();
       // Use the value from the input field
-      const file = event.dataTransfer.files[0];
-      console.log(file);
-      formik.setFieldValue('image', file);
+      const dragedImgfile = event.dataTransfer.files[0];
+      formik.setFieldValue('image', dragedImgfile);
 
       // Display image preview
-      if (file) {
+      if (dragedImgfile) {
         const reader = new FileReader();
         reader.onloadend = () => {
           setImagePreview(reader.result);
         };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(dragedImgfile);
       } else {
         setImagePreview(null);
       }
@@ -116,6 +124,7 @@ const Create = ({ onSaveCategory }) => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
+              select
               label="Category position"
               name="position"
               type="number"
@@ -123,7 +132,13 @@ const Create = ({ onSaveCategory }) => {
               {...formik.getFieldProps('position')}
               error={formik.touched.position && !!formik.errors.position}
               helperText={formik.touched.position && formik.errors.position}
-            />
+            >
+              {availablePositions.map((serialNumber) => (
+                <MenuItem key={serialNumber} value={serialNumber}>
+                  {serialNumber}
+                </MenuItem>
+              ))}
+            </TextField>
           </Grid>
           <Grid item xs={12}>
             <TextField
@@ -174,7 +189,6 @@ const Create = ({ onSaveCategory }) => {
               style={{ display: 'none' }}
               onChange={(e) => {
                 handleImageChange(e);
-                formik.handleChange(e);
               }}
             />
             <FormHelperText error={formik.touched.image && !!formik.errors.image}>
@@ -187,6 +201,16 @@ const Create = ({ onSaveCategory }) => {
               Create Category
             </Button>
           </Grid>
+          {error ? (
+            <Typography variant="body1" color="error" sx={{ my: 2 }} textAlign="center">
+              Error : {error}
+            </Typography>
+          ) : null}
+          {success ? (
+            <Typography variant="body1" color="primary" sx={{ my: 2 }} textAlign="center">
+              {success}
+            </Typography>
+          ) : null}
         </Grid>
       </form>
     </Container>
@@ -195,5 +219,6 @@ const Create = ({ onSaveCategory }) => {
 // Define prop types for the component
 Create.propTypes = {
   onSaveCategory: PropTypes.func.isRequired,
+  existingList: PropTypes.array.isRequired,
 };
 export default Create;
