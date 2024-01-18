@@ -1,7 +1,6 @@
 import { lazy } from 'react';
 
 const IndexPage = lazy(() => import('src/pages/app'));
-const BlogPage = lazy(() => import('src/pages/blog'));
 const UserPage = lazy(() => import('src/pages/user'));
 const ProductsPage = lazy(() => import('src/pages/products'));
 const Category = lazy(() => import('src/pages/category'));
@@ -38,11 +37,5 @@ export const appRoutes = [
     title: 'products',
     path: 'products',
     element: <ProductsPage />,
-  },
-  {
-    group: 'Dashboard',
-    title: 'blog',
-    path: 'blog',
-    element: <BlogPage />,
   },
 ];
