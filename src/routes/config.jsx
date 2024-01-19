@@ -10,26 +10,26 @@ export const appRoutes = [
   { group: 'Dashboard', title: 'Dashboard', path: '/', element: <IndexPage /> },
   {
     group: 'Dashboard',
-    path: 'customers',
+    path: '/customers',
     title: 'Customers',
     element: <UserPage />,
   },
   {
     group: 'Dashboard',
     title: 'Category',
-    path: 'Category',
+    path: '/category',
     element: <Category />,
   },
   {
     group: 'Dashboard',
     title: 'SubCategory',
-    path: 'sub-category',
+    path: '/sub-category',
     element: <SubCategory />,
   },
   {
     group: 'Dashboard',
     title: 'products',
-    path: 'products',
+    path: '/products',
     element: <ProductsPage />,
   },
 ];

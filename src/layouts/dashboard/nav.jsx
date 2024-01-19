@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import React, { useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -17,16 +17,12 @@ import { useResponsive } from 'src/hooks/use-responsive';
 
 import { account } from 'src/_mock/account';
 
-// import Logo from 'src/components/logo';
 import Scrollbar from 'src/components/scrollbar';
 
 import { NAV } from './config-layout';
 
-// ----------------------------------------------------------------------
-
-export default function Nav({ openNav, onCloseNav }) {
+const Nav = ({ openNav, onCloseNav }) => {
   const pathname = usePathname();
-
   const upLg = useResponsive('up', 'lg');
 
   useEffect(() => {
@@ -50,10 +46,8 @@ export default function Nav({ openNav, onCloseNav }) {
       }}
     >
       <Avatar src={account.photoURL} alt="photoURL" />
-
       <Box sx={{ ml: 2 }}>
         <Typography variant="subtitle2">{account.displayName}</Typography>
-
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           {account.role}
         </Typography>
@@ -64,7 +58,7 @@ export default function Nav({ openNav, onCloseNav }) {
   const renderMenu = (
     <Stack component="nav" spacing={0.5} sx={{ px: 2 }}>
       {appRoutes.map((item) => (
-        <NavItem key={item.title} item={item} />
+        <NavItem key={item.title} item={item} active={item.path === pathname} />
       ))}
     </Stack>
   );
@@ -80,16 +74,11 @@ export default function Nav({ openNav, onCloseNav }) {
         },
       }}
     >
-      {/* <Logo sx={{ mt: 3, ml: 4 }} /> */}
-
       {renderAccount}
-
       {renderMenu}
-
       <Box sx={{ flexGrow: 1 }} />
     </Scrollbar>
   );
-
   return (
     <Box
       sx={{
@@ -123,50 +112,47 @@ export default function Nav({ openNav, onCloseNav }) {
       )}
     </Box>
   );
-}
+};
 
 Nav.propTypes = {
   openNav: PropTypes.bool,
   onCloseNav: PropTypes.func,
 };
 
-// ----------------------------------------------------------------------
-
-function NavItem({ item }) {
-  const pathname = usePathname();
-
-  const active = item.path === pathname;
-
-  return (
-    <ListItemButton
-      component={RouterLink}
-      href={item.path}
+const NavItem = ({ item, active }) => (
+  <ListItemButton
+    component={RouterLink}
+    href={item.path}
+    sx={{
+      minHeight: 44,
+      borderRadius: 0.75,
+      typography: 'body2',
+      textTransform: 'capitalize',
+      fontWeight: active ? 'fontWeightSemiBold' : 'fontWeightMedium',
+      color: active ? 'primary.main' : 'text.secondary',
+      backgroundColor: active ? (theme) => alpha(theme.palette.primary.main, 0.08) : 'transparent',
+      '&:hover': {
+        backgroundColor: active ? (theme) => alpha(theme.palette.primary.main, 0.2) : 'transparent',
+      },
+    }}
+  >
+    <Box
+      component="span"
       sx={{
-        minHeight: 44,
-        borderRadius: 0.75,
-        typography: 'body2',
-        color: 'text.secondary',
-        textTransform: 'capitalize',
-        fontWeight: 'fontWeightMedium',
-        ...(active && {
-          color: 'primary.main',
-          fontWeight: 'fontWeightSemiBold',
-          bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
-          '&:hover': {
-            bgcolor: (theme) => alpha(theme.palette.primary.main, 0.16),
-          },
-        }),
+        width: 24,
+        height: 24,
+        mr: 2,
       }}
     >
-      <Box component="span" sx={{ width: 24, height: 24, mr: 2 }}>
-        {item.icon}
-      </Box>
-
-      <Box component="span">{item.title} </Box>
-    </ListItemButton>
-  );
-}
+      {item.icon}
+    </Box>
+    <Box component="span">{item.title}</Box>
+  </ListItemButton>
+);
 
 NavItem.propTypes = {
   item: PropTypes.object,
+  active: PropTypes.bool,
 };
+
+export default Nav;
