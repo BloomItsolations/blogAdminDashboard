@@ -1,13 +1,9 @@
 import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import Drawer from '@mui/material/Drawer';
-import Avatar from '@mui/material/Avatar';
 import { alpha } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
-import ListItemButton from '@mui/material/ListItemButton';
+import { Box, Stack, Drawer, Avatar, Typography, ListItemButton } from '@mui/material';
 
 import { appRoutes } from 'src/routes/config';
 import { usePathname } from 'src/routes/hooks';
@@ -15,16 +11,14 @@ import { RouterLink } from 'src/routes/components';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
-import { account } from 'src/_mock/account';
-
 import Scrollbar from 'src/components/scrollbar';
 
 import { NAV } from './config-layout';
 
 const Nav = ({ openNav, onCloseNav }) => {
+  const { userInfo } = useSelector((state) => state.auth);
   const pathname = usePathname();
   const upLg = useResponsive('up', 'lg');
-
   useEffect(() => {
     if (openNav) {
       onCloseNav();
@@ -45,11 +39,21 @@ const Nav = ({ openNav, onCloseNav }) => {
         bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
       }}
     >
-      <Avatar src={account.photoURL} alt="photoURL" />
+      <Avatar
+        alt={userInfo.name}
+        sx={{
+          width: 36,
+          height: 36,
+          color: (theme) => alpha(theme.palette.primary.main),
+          border: (theme) => `solid 2px ${theme.palette.background.paper}`,
+        }}
+      >
+        {userInfo.name.charAt(0).toUpperCase()}
+      </Avatar>
       <Box sx={{ ml: 2 }}>
-        <Typography variant="subtitle2">{account.displayName}</Typography>
+        <Typography variant="subtitle2">{userInfo.name}</Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {account.role}
+          {userInfo.phone}
         </Typography>
       </Box>
     </Box>
