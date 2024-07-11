@@ -7,6 +7,8 @@ import { Box, Grid, Button, TextField,Typography, FormControl  } from '@mui/mate
 
 import RestApi from 'src/api/RestApi';
 
+import Loader from './Loader';
+
 const WritePage = () => {
     const [file, setFile] = useState(null);
     const [value, setValue] = useState('');
@@ -36,7 +38,7 @@ const WritePage = () => {
             alert('Please fill in all fields and upload an image.');
             return;
         }
-
+     
         try {
             setLoading(true);
             const formData = new FormData();
@@ -50,6 +52,7 @@ const WritePage = () => {
                     'Content-Type': 'multipart/form-data'
                 }
             });
+
             if (response.status === 200) {
                 Swal.fire({
                     title: 'Success!',
@@ -90,8 +93,13 @@ const WritePage = () => {
     };
 
     if (loading) {
-        return <div style={{ display: 'flex', height: '100vh', width: '70vw', backgroundColor: '#00000042', justifyContent: 'center', alignItems: 'center' }}>
-            Publishing Blog ....
+        return <div style={{ display: 'flex', flexDirection:'column', gap:'15px', textAlign:'center', height: '70vh', width: '100%',  justifyContent: 'center', alignItems: 'center' }}>
+              <div>
+              <Loader/>
+              </div>
+             <div style={{fontSize:'25px',fontWeight:'700'}}>
+            Your Blog is Publishing .... Please wait!
+             </div>
         </div>
     }
 
@@ -133,7 +141,7 @@ const WritePage = () => {
                         type="file"
                         id="image"
                         onChange={handleFileChange}
-                        accept="image/*"
+                        accept="image/*,video/*"
                         style={{ display: 'none' }}
                     />
                     <Typography variant="body2" color="textSecondary">

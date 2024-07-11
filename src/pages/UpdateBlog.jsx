@@ -8,6 +8,8 @@ import { Box, Grid,  Button,  TextField, Typography, FormControl } from '@mui/ma
 
 import RestApi from 'src/api/RestApi';
 
+import Loader from './Loader';
+
 export default function UpdateBlog ()  {
   const { id } = useParams(); // Get the ID from the URL params
   console.log("id",id);
@@ -107,12 +109,15 @@ export default function UpdateBlog ()  {
   };
 
   if (loading) {
-    return (
-      <div style={{ display: 'flex', height: '100vh', width: '70vw', backgroundColor: '#00000042', justifyContent: 'center', alignItems: 'center' }}>
-        Updating Blog ...
-      </div>
-    );
-  }
+    return <div style={{ display: 'flex', flexDirection:'column', gap:'15px', textAlign:'center', height: '70vh', width: '100%',  justifyContent: 'center', alignItems: 'center' }}>
+          <div>
+          <Loader/>
+          </div>
+         <div style={{fontSize:'25px',fontWeight:'700'}}>
+        Your Blog is Updating.... Please wait!
+         </div>
+    </div>
+}
 
   return (
     <Box sx={{

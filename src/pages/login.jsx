@@ -30,6 +30,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   // Access the auth state from the Redux store
   const { loading, error } = useSelector((state) => state.auth);
+  
 
   const formik = useFormik({
     initialValues: {

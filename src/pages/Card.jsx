@@ -1,28 +1,34 @@
-import React from 'react';
 import Swal from 'sweetalert2';
 import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { Box,Button, Typography,  Link as MuiLink } from '@mui/material';
+import { Box, Button, Typography, Link as MuiLink } from '@mui/material';
 
 import RestApi from 'src/api/RestApi';
 
-const Card = ({ blogData, updateState, setUpdateState }) => {
+import Loader from './Loader';
 
+const Card = ({ blogData, updateState, setUpdateState }) => {
+   const [loading,setLoading]=useState(false);
     const truncateText = (text = "", maxLength) => {
         if (text && text.length > maxLength) {
             return text.substring(0, maxLength);
         }
         return text;
     };
+
+    const isVideo = (url) => ( /\.(mp4|webm|ogg)$/i.test(url));
+
     const handleDelete = async (id) => {
+        setLoading(true)
         const response = await RestApi.delete(`api/blogpost/${id}`)
-        console.log("Response", response.data.msg)
+        setLoading(false)
         setUpdateState(!updateState)
         if (response.data.msg === "Item Deleted Successfully") {
             Swal.fire({
                 title: 'Success!',
-                text: 'Sign Up successfully.',
+                text: 'Blog Deleted successfully.',
                 icon: 'success',
                 confirmButtonText: 'OK',
                 customClass: {
@@ -35,18 +41,31 @@ const Card = ({ blogData, updateState, setUpdateState }) => {
         }
     }
 
+    if (loading) {
+        return <div style={{ display: 'flex', flexDirection:'column', gap:'15px', textAlign:'center', height: '70vh', width: '100%',  justifyContent: 'center', alignItems: 'center' }}>
+              <div>
+              <Loader/>
+              </div>
+             <div style={{fontSize:'25px',fontWeight:'700'}}>
+            Your Blog is Deleting .... Please wait!
+             </div>
+        </div>
+    }
+
     return (
         <Box
             sx={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 4,
+                gap: 3,
                 p: 2,
                 boxShadow: '2px 1px 2px 2px #a4a7a8',
                 borderRadius: 2,
                 backgroundColor: "#f8f9f9",
                 flexDirection: { xs: 'column', md: 'row' },
-                mb: 6
+                mb: 6,
+                width:{xs:'90%',md:'90%',lg:'98%'},
+                marginInline:'auto'
             }}
         >
             <Box
@@ -57,17 +76,29 @@ const Card = ({ blogData, updateState, setUpdateState }) => {
                     width: '100%',
                 }}
             >
-                <img
-                    src={blogData.image}
-                    alt='Blog '
-                />
+
+                {
+                    isVideo(blogData.image) ? <video
+                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                        controls
+                    >
+                        <source src={blogData.image} type="video/mp4" />
+                        <track kind="captions" srcLang="en" label="English captions" />
+                        Your browser does not support the video tag.
+                    </video> : <img
+                        src={blogData.image}
+                        alt='Blog '
+                    />
+                }
+
+
             </Box>
             <Box
                 sx={{
                     flex: 3,
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: 3
+                    gap: 1
                 }}
             >
                 <MuiLink component={Link} to={`/${blogData._id}`} sx={{ textDecoration: 'none' }}>
