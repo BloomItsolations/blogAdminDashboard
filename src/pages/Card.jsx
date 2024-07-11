@@ -1,24 +1,39 @@
-import React, { useContext } from 'react';
-import { Box, Typography, Button, Link as MuiLink } from '@mui/material';
+import React from 'react';
+import Swal from 'sweetalert2';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-const Card = () => {
+import { Box,Button, Typography,  Link as MuiLink } from '@mui/material';
 
-    // Static data
-    const blogData = {
-        id: '1',
-        image: '/path/to/image.jpg', // Replace with the actual path to your image
-        title: 'Introduction to HackerRank',
-        content: "sd <h2><strong>Introduction</strong></h2><p>In the world of coding and software development, keeping your skills sharp and staying updated with the latest technologies is crucial. One platform that has been helping developers achieve this for years is HackerRank. Whether you are a beginner trying to learn the basics or an experienced professional looking to hone your skills, HackerRank has something to offer for everyone.</p><h2><strong>What is HackerRank?</strong></h2><p>HackerRank is a technical hiring platform that focuses on competitive programming challenges and contests. It provides a wide array of coding problems across various domains such as algorithms, data structures, artificial intelligence, and databases. Additionally, it offers tutorials and interview preparation kits to help developers improve their coding skills and prepare for job interviews.</p>",
-        authername: 'John Doe'
+import RestApi from 'src/api/RestApi';
+
+const Card = ({ blogData, updateState, setUpdateState }) => {
+
+    const truncateText = (text = "", maxLength) => {
+        if (text && text.length > maxLength) {
+            return text.substring(0, maxLength);
+        }
+        return text;
     };
-
-    // const truncateText = (text, maxLength) => {
-    //     if (text && text.length > maxLength) {
-    //         return text.substring(0, maxLength) + '...';
-    //     }
-    //     return text;
-    // };
+    const handleDelete = async (id) => {
+        const response = await RestApi.delete(`api/blogpost/${id}`)
+        console.log("Response", response.data.msg)
+        setUpdateState(!updateState)
+        if (response.data.msg === "Item Deleted Successfully") {
+            Swal.fire({
+                title: 'Success!',
+                text: 'Sign Up successfully.',
+                icon: 'success',
+                confirmButtonText: 'OK',
+                customClass: {
+                    popup: 'my-custom-popup',
+                    title: 'my-custom-title',
+                    content: 'my-custom-content',
+                    confirmButton: 'my-custom-button'
+                }
+            })
+        }
+    }
 
     return (
         <Box
@@ -55,8 +70,8 @@ const Card = () => {
                     gap: 3
                 }}
             >
-                <MuiLink component={Link} href={`/${blogData.id}`} sx={{ textDecoration: 'none' }}>
-                    {/* <Typography
+                <MuiLink component={Link} to={`/${blogData._id}`} sx={{ textDecoration: 'none' }}>
+                    <Typography
                         variant="h5"
                         sx={{
                             fontWeight: 600,
@@ -64,37 +79,29 @@ const Card = () => {
                         }}
                     >
                         {truncateText(blogData.title, 150)}
-                    </Typography> */}
+                    </Typography>
                 </MuiLink>
-                {/* <Typography
+                <Typography
                     dangerouslySetInnerHTML={{ __html: truncateText(blogData.content, 190) }}
                     sx={{
                         fontSize: 18,
                         fontWeight: 300,
                         color: "#333333"
                     }}
-                /> */}
+                />
                 <Box
                     sx={{
                         display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center'
+                        justifyContent: 'flex-end',
+                        gap: 2
                     }}
                 >
-                    <MuiLink component={Link} href={`/${blogData.id}`} sx={{ textDecoration: 'none' }}>
-                        <Button variant="outlined" color="primary">
-                            Read More..
-                        </Button>
-                    </MuiLink>
-                    <Typography
-                        sx={{
-                            fontSize: 14,
-                            fontWeight: 500,
-                            color: 'gray'
-                        }}
-                    >
-                        Author: {blogData.authername}
-                    </Typography>
+                    <Button variant="outlined" color="primary" component={Link} to={`/updateblog/${blogData._id}`}>
+                        Update
+                    </Button>
+                    <Button variant="outlined" color="secondary" onClick={() => handleDelete(blogData._id)}>
+                        Delete
+                    </Button>
                 </Box>
             </Box>
         </Box>
@@ -102,3 +109,19 @@ const Card = () => {
 };
 
 export default Card;
+
+
+Card.propTypes = {
+    blogData: PropTypes.shape({
+        _id: PropTypes.string, // Remove isRequired if not needed
+        title: PropTypes.string.isRequired,
+        image: PropTypes.string.isRequired,
+        AdminId: PropTypes.string.isRequired,
+        content: PropTypes.string.isRequired,
+        createdAt: PropTypes.string.isRequired,
+        updatedAt: PropTypes.string.isRequired,
+        __v: PropTypes.number.isRequired
+    }).isRequired,
+    updateState: PropTypes.bool.isRequired,
+    setUpdateState: PropTypes.func.isRequired
+};

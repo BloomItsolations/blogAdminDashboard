@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { Box, Button, FormControl, Grid, TextField, Typography } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
-import RestApi from 'src/api/RestApi';
 import Swal from 'sweetalert2';
+import ReactQuill from 'react-quill';
+import React, { useState } from 'react';
+import 'react-quill/dist/quill.snow.css';
+
+import { Box, Grid, Button, TextField,Typography, FormControl  } from '@mui/material';
+
+import RestApi from 'src/api/RestApi';
 
 const WritePage = () => {
-    const theme = useTheme();
     const [file, setFile] = useState(null);
     const [value, setValue] = useState('');
     const [title, setTitle] = useState('');
@@ -90,8 +90,8 @@ const WritePage = () => {
     };
 
     if (loading) {
-        return <div style={{ display: 'flex', height: '100vh', width: '100vw', backgroundColor: '#00000042', justifyContent: 'center', alignItems: 'center' }}>
-            File Uploading ....
+        return <div style={{ display: 'flex', height: '100vh', width: '70vw', backgroundColor: '#00000042', justifyContent: 'center', alignItems: 'center' }}>
+            Publishing Blog ....
         </div>
     }
 

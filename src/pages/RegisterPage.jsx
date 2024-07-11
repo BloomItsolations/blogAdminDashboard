@@ -2,8 +2,8 @@ import * as Yup from 'yup';
 import Swal from 'sweetalert2';
 import { useFormik } from 'formik';
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Helmet } from 'react-helmet-async';
-import { useDispatch, useSelector } from 'react-redux';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -19,12 +19,12 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import { useRouter } from 'src/routes/hooks';
 
+import RestApi from 'src/api/RestApi';
 import { bgGradient } from 'src/theme/css';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 
-import RestApi from 'src/api/RestApi';
 
 export default function RegisterPage() {
     const theme = useTheme();
