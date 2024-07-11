@@ -1,24 +1,24 @@
 import { lazy } from 'react';
+import MyBlog from 'src/pages/MyBlog';
 
-const IndexPage = lazy(() => import('src/pages/app'));
-const UserPage = lazy(() => import('src/pages/user'));
+import WritePage from 'src/pages/WriteBlog';
+
 const ProductsPage = lazy(() => import('src/pages/products'));
 const Category = lazy(() => import('src/pages/category'));
 const SubCategory = lazy(() => import('src/pages/subcategory'));
 // const SellerPage = lazy(() => import('src/pages/Seller'));
 export const appRoutes = [
-  { group: 'Dashboard', title: 'Dashboard', path: '/', element: <IndexPage /> },
   {
     group: 'Dashboard',
-    path: '/customers',
-    title: 'Customers',
-    element: <UserPage />,
+    path: '/',
+    title: 'Dashboard',
+    element: <WritePage />,
   },
   {
     group: 'Dashboard',
-    title: 'Category',
-    path: '/category',
-    element: <Category />,
+    title: 'Blog Management',
+    path: '/myblog',
+    element: <MyBlog />,
   },
   {
     group: 'Dashboard',

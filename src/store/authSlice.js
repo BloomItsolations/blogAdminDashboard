@@ -14,15 +14,13 @@ export const userLogin = createAsyncThunk(
         },
       };
 
-      // Make request to the backend
-      const { data } = await RestApi.post('/auth/administrator/login/email', formData, config);
-
-      // Store user's token in local storage
-      sessionStorage.setItem('userInfo', JSON.stringify(data));
+      const { data } = await RestApi.post('/api/admin/login', formData, config);
+       if(data.msg==='Login Successfully'){
+         sessionStorage.setItem('userInfo', JSON.stringify(data?.userDetails));
+       }
 
       return data;
     } catch (error) {
-      // Return custom error message from the API if any
       if (error.response && error.response.data.message) {
         return rejectWithValue(error.response.data.message);
       }
@@ -40,11 +38,12 @@ const authSlice = createSlice({
       ? JSON.parse(sessionStorage.getItem('userInfo'))
       : null,
     error: null,
-    success: false,
+    success: null,
   },
   reducers: {
     clearError: (state) => {
       state.error = null;
+      state.success=null;
     },
     logout: (state) => {
       sessionStorage.removeItem('userInfo'); // Deletes token from storage
@@ -59,12 +58,13 @@ const authSlice = createSlice({
       .addCase(userLogin.pending, (state) => {
         state.loading = true;
         state.error = null;
-        state.success = false;
+        state.success = null;
       })
       .addCase(userLogin.fulfilled, (state, { payload }) => {
         state.loading = false;
         state.userInfo = payload;
-        state.success = true;
+        state.success = payload.msg;
+        console.log("payload from login",payload)
       })
       .addCase(userLogin.rejected, (state, { payload }) => {
         state.loading = false;

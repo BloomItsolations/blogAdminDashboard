@@ -1,6 +1,7 @@
 import * as Yup from 'yup';
+import Swal from 'sweetalert2';
 import { useFormik } from 'formik';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -23,16 +24,18 @@ import { bgGradient } from 'src/theme/css';
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 
-import { userLogin, clearError } from '../store/authSlice';
+import RestApi from 'src/api/RestApi';
+import { useNavigate } from 'react-router-dom';
 
 export default function LoginPage() {
   const theme = useTheme();
-  const dispatch = useDispatch();
   const router = useRouter();
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false);
   // Access the auth state from the Redux store
-  const { loading, error } = useSelector((state) => state.auth);
-  console.log(error);
+  const { loading, error, success } = useSelector((state) => state.auth);
+
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -43,17 +46,83 @@ export default function LoginPage() {
       password: Yup.string().required('Required'),
     }),
     onSubmit: (values) => {
-      dispatch(clearError());
-      dispatch(userLogin(values))
-        .then(() => {
-          // If no error occurred during login, navigate to the home page
-          router.push('/');
-        })
-        .catch((err) => {
-          // Handle login failure (display an error message, etc.)
-          console.error('Login failed:', error);
-        });
-    },
+      const handlelogin = async () => {
+        const config = {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        };
+        try {
+          const { data } = await RestApi.post('/api/admin/login', values, config);
+          if (data.msg === 'Login Successfully') {
+            sessionStorage.setItem('userInfo', JSON.stringify(data?.userDetails));
+            Swal.fire({
+              title: 'Success!',
+              text: 'Login  successfully.',
+              icon: 'success',
+              confirmButtonText: 'OK',
+              customClass: {
+                popup: 'my-custom-popup',
+                title: 'my-custom-title',
+                content: 'my-custom-content',
+                confirmButton: 'my-custom-button'
+              }
+            })
+            window.location.href = '/';
+          }
+          else if (data.msg === 'Invalid Email Id!') {
+            Swal.fire({
+              title: 'Error!',
+              text: 'Invalid Email Id!',
+              icon: 'error',
+              confirmButtonText: 'OK',
+              confirmButtonColor: '#d33',
+              customClass: {
+                popup: 'my-custom-popup',
+                title: 'my-custom-title',
+                content: 'my-custom-content',
+                confirmButton: 'my-custom-button'
+              }
+            });
+          }
+          else if (data.msg === 'Invalid Password') {
+            Swal.fire({
+              title: 'Error!',
+              text: 'Invalid Password',
+              icon: 'error',
+              confirmButtonText: 'OK',
+              confirmButtonColor: '#d33',
+              customClass: {
+                popup: 'my-custom-popup',
+                title: 'my-custom-title',
+                content: 'my-custom-content',
+                confirmButton: 'my-custom-button'
+              }
+            });
+          }
+          else {
+            Swal.fire({
+              title: 'Error!',
+              text: 'Something went wrong. Please try again later.',
+              icon: 'error',
+              confirmButtonText: 'OK',
+              confirmButtonColor: '#d33',
+              customClass: {
+                popup: 'my-custom-popup',
+                title: 'my-custom-title',
+                content: 'my-custom-content',
+                confirmButton: 'my-custom-button'
+              }
+            });
+          }
+
+        }
+        catch (err) {
+          console.log("Error", err);
+        }
+      }
+      handlelogin();
+    }
   });
 
   const { values, handleChange, handleSubmit, handleBlur, touched, errors } = formik;
@@ -61,7 +130,7 @@ export default function LoginPage() {
   return (
     <>
       <Helmet>
-        <title> Login | Hemtej Sea Foods </title>
+        <title> Login | Blog Admin </title>
       </Helmet>
       <Box
         sx={{
@@ -89,7 +158,7 @@ export default function LoginPage() {
             }}
           >
             <Typography variant="h4" paddingY={2}>
-              Sign in to Hemtej Sea Foods
+              Sign in For Writing Blog
             </Typography>
 
             <form onSubmit={handleSubmit}>
@@ -126,7 +195,7 @@ export default function LoginPage() {
                   }}
                 />
               </Stack>
-
+              <Link href='/register'>Register here..</Link>
               <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }}>
                 <Link variant="subtitle2" underline="hover">
                   Forgot password?
