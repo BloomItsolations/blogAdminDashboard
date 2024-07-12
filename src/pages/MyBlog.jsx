@@ -5,29 +5,27 @@ import RestApi from 'src/api/RestApi';
 import Card from './Card';
 
 export default function MyBlog() {
-    const [myblog, setMyBlog] = useState([]);
-    const [updateState,setUpdateState]=useState(false);
-    useEffect(() => {
-        const fetchBlogData = async () => {
-            try {
-                const response = await RestApi.get(`api//blogpost`);
-                setMyBlog(response.data?.Post)
-            } catch (error) {
-                console.error("Error fetching blog data:", error);
-            }
-        };
+  const [myblog, setMyBlog] = useState([]);
+  const [updateState, setUpdateState] = useState(false);
+  useEffect(() => {
+    const fetchBlogData = async () => {
+      try {
+        const response = await RestApi.get(`api/blogpost`);
+        setMyBlog(response.data?.Post);
+      } catch (error) {
+        console.error('Error fetching blog data:', error);
+      }
+    };
 
-        fetchBlogData();
-    }, [updateState]); 
+    fetchBlogData();
+  }, [updateState]);
 
-    return (
-        <>
-
-            {
-                myblog && myblog?.map((value) => (
-                    <Card blogData={value} updateState={updateState} setUpdateState={setUpdateState}/>
-                ))
-            }
-        </>
-    );
+  return (
+    <>
+      {myblog &&
+        myblog?.map((value) => (
+          <Card blogData={value} updateState={updateState} setUpdateState={setUpdateState} />
+        ))}
+    </>
+  );
 }
