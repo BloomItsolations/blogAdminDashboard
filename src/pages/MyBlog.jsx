@@ -23,8 +23,13 @@ export default function MyBlog() {
   return (
     <>
       {myblog &&
-        myblog?.map((value) => (
-          <Card blogData={value} updateState={updateState} setUpdateState={setUpdateState} />
+        myblog?.map((value, index) => (
+          <Card
+            key={index + 1}
+            blogData={value}
+            updateState={updateState}
+            setUpdateState={setUpdateState}
+          />
         ))}
     </>
   );

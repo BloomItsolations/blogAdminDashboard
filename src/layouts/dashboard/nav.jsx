@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 
 import { alpha } from '@mui/material/styles';
 import { Box, Stack, Drawer, Avatar, Typography, ListItemButton } from '@mui/material';
@@ -16,7 +15,7 @@ import Scrollbar from 'src/components/scrollbar';
 import { NAV } from './config-layout';
 
 const Nav = ({ openNav, onCloseNav }) => {
-  const { userInfo } = useSelector((state) => state.auth);
+  const userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
   const pathname = usePathname();
   const upLg = useResponsive('up', 'lg');
   useEffect(() => {
@@ -48,12 +47,12 @@ const Nav = ({ openNav, onCloseNav }) => {
           border: (theme) => `solid 2px ${theme.palette.background.paper}`,
         }}
       >
-        {userInfo.name.charAt(0).toUpperCase()}
+        {userInfo?.name.charAt(0).toUpperCase()}
       </Avatar>
       <Box sx={{ ml: 2 }}>
         <Typography variant="subtitle2">{userInfo.name}</Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {userInfo.phone}
+          {userInfo.email}
         </Typography>
       </Box>
     </Box>

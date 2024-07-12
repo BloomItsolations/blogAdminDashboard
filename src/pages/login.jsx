@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 import Swal from 'sweetalert2';
 import { useFormik } from 'formik';
-import React, {  useState } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Helmet } from 'react-helmet-async';
 
@@ -23,14 +23,12 @@ import { bgGradient } from 'src/theme/css';
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 
-
 export default function LoginPage() {
   const theme = useTheme();
 
   const [showPassword, setShowPassword] = useState(false);
   // Access the auth state from the Redux store
   const { loading, error } = useSelector((state) => state.auth);
-  
 
   const formik = useFormik({
     initialValues: {
@@ -61,12 +59,11 @@ export default function LoginPage() {
                 popup: 'my-custom-popup',
                 title: 'my-custom-title',
                 content: 'my-custom-content',
-                confirmButton: 'my-custom-button'
-              }
-            })
+                confirmButton: 'my-custom-button',
+              },
+            });
             window.location.href = '/';
-          }
-          else if (data.msg === 'Invalid Email Id!') {
+          } else if (data.msg === 'Invalid Email Id!') {
             Swal.fire({
               title: 'Error!',
               text: 'Invalid Email Id!',
@@ -77,11 +74,10 @@ export default function LoginPage() {
                 popup: 'my-custom-popup',
                 title: 'my-custom-title',
                 content: 'my-custom-content',
-                confirmButton: 'my-custom-button'
-              }
+                confirmButton: 'my-custom-button',
+              },
             });
-          }
-          else if (data.msg === 'Invalid Password') {
+          } else if (data.msg === 'Invalid Password') {
             Swal.fire({
               title: 'Error!',
               text: 'Invalid Password',
@@ -92,11 +88,10 @@ export default function LoginPage() {
                 popup: 'my-custom-popup',
                 title: 'my-custom-title',
                 content: 'my-custom-content',
-                confirmButton: 'my-custom-button'
-              }
+                confirmButton: 'my-custom-button',
+              },
             });
-          }
-          else {
+          } else {
             Swal.fire({
               title: 'Error!',
               text: 'Something went wrong. Please try again later.',
@@ -107,18 +102,16 @@ export default function LoginPage() {
                 popup: 'my-custom-popup',
                 title: 'my-custom-title',
                 content: 'my-custom-content',
-                confirmButton: 'my-custom-button'
-              }
+                confirmButton: 'my-custom-button',
+              },
             });
           }
-
+        } catch (err) {
+          console.log('Error', err);
         }
-        catch (err) {
-          console.log("Error", err);
-        }
-      }
+      };
       handlelogin();
-    }
+    },
   });
 
   const { values, handleChange, handleSubmit, handleBlur, touched, errors } = formik;
@@ -137,24 +130,18 @@ export default function LoginPage() {
           height: 1,
         }}
       >
-        <Logo
-          sx={{
-            position: 'fixed',
-            top: { xs: 16, md: 24 },
-            left: { xs: 16, md: 24 },
-          }}
-        />
-
         <Stack alignItems="center" justifyContent="center" sx={{ height: 1 }}>
           <Card
             sx={{
               p: 5,
               width: 1,
-              maxWidth: 420,
+              maxWidth: 400,
+              textAlign: 'center',
             }}
           >
+            <Logo />
             <Typography variant="h4" paddingY={2}>
-              Sign in For Writing Blog
+              Sign in to Cypress Dashboard
             </Typography>
 
             <form onSubmit={handleSubmit}>
@@ -191,7 +178,6 @@ export default function LoginPage() {
                   }}
                 />
               </Stack>
-              <Link href='/register'>Register here..</Link>
               <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }}>
                 <Link variant="subtitle2" underline="hover">
                   Forgot password?

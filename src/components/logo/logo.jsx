@@ -9,31 +9,22 @@ import { RouterLink } from 'src/routes/components';
 // ----------------------------------------------------------------------
 
 const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
-  // OR using local (public folder)
-  // -------------------------------------------------------
-  // const logo = (
-  //   <Box
-  //     component="img"
-  //     src="/logo/logo_single.svg" => your path
-  //     sx={{ width: 40, height: 40, cursor: 'pointer', ...sx }}
-  //   />
-  // );
-
   const logo = (
     <Box
       ref={ref}
-      component="div"
+      component="img"
+      src="/logo.png"
       sx={{
         width: 'auto',
         height: 100,
         display: 'inline-flex',
         objectFit: 'contain',
+        borderRadius: 100,
         ...sx,
       }}
+      alt="logo"
       {...other}
-    >
-      <img src="/apple-touch-icon.png" alt="logo" />
-    </Box>
+    />
   );
 
   if (disabledLink) {

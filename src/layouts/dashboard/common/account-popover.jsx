@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -10,30 +9,21 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-import { logout } from '../../../store/authSlice';
 // ----------------------------------------------------------------------
 
 const MENU_OPTIONS = [
   {
     label: 'Home',
     icon: 'eva:home-fill',
-  },
-  {
-    label: 'Profile',
-    icon: 'eva:person-fill',
-  },
-  {
-    label: 'Settings',
-    icon: 'eva:settings-2-fill',
+    linkTo: 'https://cypress-blog.vercel.app',
   },
 ];
 
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
-  const { userInfo } = useSelector((state) => state.auth);
+  const userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
   const [open, setOpen] = useState(null);
-  const dispatch = useDispatch();
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
@@ -42,8 +32,9 @@ export default function AccountPopover() {
     setOpen(null);
   };
   const handleLogout = () => {
-    dispatch(logout());
+    sessionStorage.removeItem('userInfo');
     handleClose();
+    window.location.href = '/';
   };
   return (
     <>
@@ -60,7 +51,7 @@ export default function AccountPopover() {
         }}
       >
         <Avatar
-          alt={userInfo.name}
+          alt={userInfo?.name}
           sx={{
             width: 36,
             height: 36,
@@ -98,7 +89,13 @@ export default function AccountPopover() {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         {MENU_OPTIONS.map((option) => (
-          <MenuItem key={option.label} onClick={handleClose}>
+          <MenuItem
+            component="a"
+            href={option.linkTo}
+            target="_blank"
+            key={option.label}
+            onClick={handleClose}
+          >
             {option.label}
           </MenuItem>
         ))}
